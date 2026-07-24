@@ -106,3 +106,25 @@ describe('deriveVisibleBands — search', () => {
     expect(result.map((b) => b.id)).toEqual(['002', '004'])
   })
 })
+
+describe('deriveVisibleBands — genre + combined', () => {
+  it("'all' returns every band", () => {
+    expect(deriveVisibleBands({ bands: BANDS, genre: 'all' })).toHaveLength(3)
+  })
+
+  it('filters to a single genre', () => {
+    expect(deriveVisibleBands({ bands: BANDS, genre: 'rock' }).map((b) => b.id)).toEqual(['001'])
+    expect(deriveVisibleBands({ bands: BANDS, genre: 'pop' }).map((b) => b.id)).toEqual(['004'])
+  })
+
+  it('applies query AND genre together', () => {
+    // 'e' matches Velvet Echo (rock) + Silver Strings (country) + Crimson Groove... "crimson groove" has no 'e'? -> it does not
+    const rockAndE = deriveVisibleBands({ bands: BANDS, query: 'e', genre: 'rock' })
+    expect(rockAndE.map((b) => b.id)).toEqual(['001'])
+  })
+
+  it('returns empty when query and genre have no overlap', () => {
+    // 'velvet' is a rock band; asking for pop yields nothing
+    expect(deriveVisibleBands({ bands: BANDS, query: 'velvet', genre: 'pop' })).toEqual([])
+  })
+})
