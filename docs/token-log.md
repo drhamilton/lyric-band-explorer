@@ -1,9 +1,13 @@
 # Token / cost ledger
 
 Running account of the build. Token/cost figures come from Claude Code's `/cost`
-command (authoritative — the model can't read its own counts). Run `/cost` at a
-milestone and paste the number in the "cost snapshot" column to get per-stage
-deltas.
+command (authoritative — the model can't read its own counts).
+
+> Note: `/cost` is **session-cumulative** — there is no native per-commit / per-PR
+> / per-ticket token attribution. Per-stage deltas only exist if `/cost` is
+> snapshotted at each ticket boundary *as the work happens* and subtracted; they
+> can't be reconstructed after the fact. This run wasn't snapshotted live, so the
+> per-stage column is left `_tbd_` and only an end-of-build total is meaningful.
 
 | Milestone | Issue | Commit | `/cost` snapshot |
 |-----------|-------|--------|------------------|
