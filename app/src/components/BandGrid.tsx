@@ -7,10 +7,14 @@ interface BandGridProps {
   onSelect: (id: string) => void
 }
 
-/** Responsive grid of band cards; columns reflow to the available width. */
+/**
+ * Grid of band cards. Three per row on desktop (per the comp), collapsing to
+ * two then one on narrower widths. `items-stretch` (grid default) + `h-full`
+ * cards give every card in a row an equal height.
+ */
 export default function BandGrid({ bands, selectedId, onSelect }: BandGridProps) {
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {bands.map((band) => (
         <BandCard
           key={band.id}

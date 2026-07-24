@@ -8,9 +8,10 @@ interface BandCardProps {
 }
 
 /**
- * A single band card: cover image, band name (accent green), album line, and
- * description. Clicking selects it (indigo border, per the comp). Missing cover
- * images fall back to default.png via onError.
+ * A single band card: cover image, band name, album line, description. Cards are
+ * uniform height (flex column, h-full in the grid) and share one image height
+ * (fixed 16:9 on equal-width columns). Type specs come straight from the comp.
+ * Clicking selects it (indigo border). Missing covers fall back to default.png.
  */
 export default function BandCard({ band, selected, onSelect }: BandCardProps) {
   return (
@@ -19,7 +20,7 @@ export default function BandCard({ band, selected, onSelect }: BandCardProps) {
       onClick={onSelect}
       aria-pressed={selected}
       className={
-        'overflow-hidden rounded-xl bg-card text-left transition-shadow ring-1 ' +
+        'flex h-full flex-col overflow-hidden rounded-xl bg-card text-left transition-shadow ring-1 ' +
         (selected ? 'ring-2 ring-selected' : 'ring-white/5 hover:ring-white/20')
       }
     >
@@ -33,12 +34,19 @@ export default function BandCard({ band, selected, onSelect }: BandCardProps) {
           if (img.src.endsWith(DEFAULT_COVER)) return
           img.src = DEFAULT_COVER
         }}
-        className="aspect-[16/9] w-full object-cover"
+        className="aspect-[16/9] w-full shrink-0 object-cover"
       />
-      <div className="p-5">
-        <h2 className="text-lg font-semibold text-accent-soft">{band.band_name}</h2>
-        <p className="mt-1 text-sm text-neutral-200">{band.album}</p>
-        <p className="mt-3 text-sm leading-relaxed text-muted">{band.description}</p>
+      <div className="flex flex-1 flex-col p-5">
+        {/* Title: #007264, Inter Bold 20/700 */}
+        <h2 className="text-[20px] font-bold leading-tight text-accent">
+          {band.band_name}
+        </h2>
+        {/* Album: #cbcbcb, Inter Regular 13/400 */}
+        <p className="mt-2 text-[13px] font-normal text-[#cbcbcb]">{band.album}</p>
+        {/* Description: #9c9c9c, Inter Regular 13/400 */}
+        <p className="mt-3 line-clamp-4 text-[13px] font-normal leading-relaxed text-[#9c9c9c]">
+          {band.description}
+        </p>
       </div>
     </button>
   )
