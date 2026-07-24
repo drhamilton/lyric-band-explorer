@@ -33,7 +33,7 @@ export default function App() {
           closed, the grid column takes the full width and reflows wider. */}
       <div
         className={
-          'mt-6 grid gap-6 ' +
+          'mt-8 grid gap-8 ' +
           (welcomeOpen ? 'lg:grid-cols-[1fr_380px]' : 'grid-cols-1')
         }
       >
