@@ -20,7 +20,7 @@ export default function TopBar({
   onGenreChange,
 }: TopBarProps) {
   return (
-    <header className="flex items-center gap-6 rounded-2xl bg-surface px-5 py-3">
+    <header className="flex flex-wrap items-center gap-x-6 gap-y-3 rounded-2xl bg-surface px-5 py-3">
       <Logo />
       <GenreFilter value={genre} onChange={onGenreChange} />
       <SearchBox value={query} onChange={onQueryChange} />

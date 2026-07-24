@@ -5,13 +5,15 @@ import { deriveVisibleBands } from './lib/bands.ts'
 import BandGrid from './components/BandGrid.tsx'
 import TopBar from './components/TopBar.tsx'
 import WelcomePanel from './components/WelcomePanel.tsx'
+import ErrorState from './components/ErrorState.tsx'
 import type { GenreFilter } from './types.ts'
 
 export default function App() {
-  const { bands, status } = useBands()
+  const { bands, status, error } = useBands()
   const [query, setQuery] = useState('')
   const [genre, setGenre] = useState<GenreFilter>('all')
   const [welcomeOpen, setWelcomeOpen] = useState(true)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   const visibleBands = useMemo(
     () => deriveVisibleBands({ bands, query, genre }),
@@ -37,12 +39,14 @@ export default function App() {
       >
         <main>
           {status === 'loading' && <p className="text-muted">Loading bands…</p>}
-          {status === 'error' && (
-            <p className="text-red-400">Couldn’t load bands. Please try again.</p>
-          )}
+          {status === 'error' && <ErrorState message={error?.message} />}
           {status === 'ready' &&
             (visibleBands.length > 0 ? (
-              <BandGrid bands={visibleBands} />
+              <BandGrid
+                bands={visibleBands}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+              />
             ) : (
               <p className="mt-16 text-center text-muted">
                 No bands match your search and filter.

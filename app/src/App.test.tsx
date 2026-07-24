@@ -33,3 +33,14 @@ describe('App — welcome panel collapse (stretch goal)', () => {
     expect(screen.getByRole('button', { name: /welcome/i })).toBeInTheDocument()
   })
 })
+
+describe('App — load error', () => {
+  it('shows a graceful error state when bands.json fails to load', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({ ok: false, status: 500, json: async () => ({}) })),
+    )
+    render(<App />)
+    expect(await screen.findByRole('alert')).toHaveTextContent(/couldn’t load bands/i)
+  })
+})
