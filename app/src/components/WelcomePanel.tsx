@@ -8,7 +8,7 @@ interface WelcomePanelProps {
 // copy (original wording). Closable via the × — closing expands the band grid.
 export default function WelcomePanel({ onClose }: WelcomePanelProps) {
   return (
-    <aside className="flex flex-col gap-6 rounded-2xl bg-panel p-6 lg:sticky lg:top-6 lg:h-[calc(100vh-3rem)] lg:overflow-y-auto">
+    <aside className="flex flex-col gap-6 rounded-2xl bg-panel p-6 lg:min-h-0 lg:overflow-y-auto">
       <div className="flex items-start justify-between gap-4">
         <h2 className="text-lg font-semibold text-accent-soft">Welcome to Lyric Music</h2>
         <button

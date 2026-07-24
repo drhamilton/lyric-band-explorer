@@ -21,7 +21,11 @@ export default function App() {
   )
 
   return (
-    <div className="min-h-screen bg-bg p-6">
+    // Fixed-height app shell on desktop: the top bar stays put and the content
+    // row fills the remaining viewport height, so the grid and welcome panel
+    // scroll internally instead of the whole page. Falls back to normal page
+    // flow below lg.
+    <div className="min-h-screen bg-bg p-6 lg:flex lg:h-screen lg:flex-col lg:overflow-hidden">
       <TopBar
         query={query}
         onQueryChange={setQuery}
@@ -33,11 +37,11 @@ export default function App() {
           closed, the grid column takes the full width and reflows wider. */}
       <div
         className={
-          'mt-8 grid items-start gap-8 ' +
-          (welcomeOpen ? 'lg:grid-cols-[1fr_380px]' : 'grid-cols-1')
+          'mt-8 grid gap-8 lg:min-h-0 lg:flex-1 lg:items-stretch ' +
+          (welcomeOpen ? 'items-start lg:grid-cols-[1fr_380px]' : 'grid-cols-1')
         }
       >
-        <main>
+        <main className="lg:min-h-0 lg:overflow-y-auto">
           {status === 'loading' && <p className="text-muted">Loading bands…</p>}
           {status === 'error' && <ErrorState message={error?.message} />}
           {status === 'ready' &&
