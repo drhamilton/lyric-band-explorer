@@ -21,6 +21,11 @@
   --color-muted: #727272;
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Fixed width of the welcome panel — a spec value from the design comp.
+     Exposed as the `w-panel` utility and referenced by the layout grid so the
+     number lives in exactly one place. */
+  --width-panel: 380px;
 }
 
 html,

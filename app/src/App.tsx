@@ -38,7 +38,9 @@ export default function App() {
       <div
         className={
           'mt-8 grid gap-8 lg:min-h-0 lg:flex-1 lg:items-stretch ' +
-          (welcomeOpen ? 'items-start lg:grid-cols-[1fr_380px]' : 'grid-cols-1')
+          (welcomeOpen
+            ? 'items-start lg:grid-cols-[1fr_var(--width-panel)]'
+            : 'grid-cols-1')
         }
       >
         <main className="lg:min-h-0 lg:overflow-y-auto">

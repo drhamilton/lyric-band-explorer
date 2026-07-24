@@ -7,7 +7,7 @@ design comp.
 
 **Live repo:** https://github.com/drhamilton/lyric-band-explorer
 
-![Band explorer layout](reference/sources/design/layout.png)
+![Lyric Band Explorer — running app](docs/images/app.png)
 
 ---
 
