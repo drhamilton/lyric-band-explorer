@@ -2,16 +2,18 @@ import { useMemo, useState } from 'react'
 import { FiInfo } from 'react-icons/fi'
 import { useBands } from './hooks/useBands.ts'
 import { deriveVisibleBands } from './lib/bands.ts'
+import { cx } from './lib/cx.ts'
+import { COPY } from './copy.ts'
 import BandGrid from './components/BandGrid.tsx'
 import TopBar from './components/TopBar.tsx'
 import WelcomePanel from './components/WelcomePanel.tsx'
 import ErrorState from './components/ErrorState.tsx'
-import type { GenreFilter } from './types.ts'
+import { ALL_GENRES, STATUS, type GenreFilter } from './types.ts'
 
 export default function App() {
   const { bands, status, error } = useBands()
   const [query, setQuery] = useState('')
-  const [genre, setGenre] = useState<GenreFilter>('all')
+  const [genre, setGenre] = useState<GenreFilter>(ALL_GENRES)
   const [welcomeOpen, setWelcomeOpen] = useState(true)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
@@ -36,17 +38,17 @@ export default function App() {
       {/* Two-column layout: band grid + welcome panel. When the panel is
           closed, the grid column takes the full width and reflows wider. */}
       <div
-        className={
-          'mt-8 grid gap-8 lg:min-h-0 lg:flex-1 lg:items-stretch ' +
-          (welcomeOpen
+        className={cx(
+          'mt-8 grid gap-8 lg:min-h-0 lg:flex-1 lg:items-stretch',
+          welcomeOpen
             ? 'items-start lg:grid-cols-[1fr_var(--width-panel)]'
-            : 'grid-cols-1')
-        }
+            : 'grid-cols-1',
+        )}
       >
         <main className="lg:min-h-0 lg:overflow-y-auto">
-          {status === 'loading' && <p className="text-muted">Loading bands…</p>}
-          {status === 'error' && <ErrorState message={error?.message} />}
-          {status === 'ready' &&
+          {status === STATUS.Loading && <p className="text-muted">{COPY.loading}</p>}
+          {status === STATUS.Error && <ErrorState message={error?.message} />}
+          {status === STATUS.Ready &&
             (visibleBands.length > 0 ? (
               <BandGrid
                 bands={visibleBands}
@@ -54,9 +56,7 @@ export default function App() {
                 onSelect={setSelectedId}
               />
             ) : (
-              <p className="mt-16 text-center text-muted">
-                No bands match your search and filter.
-              </p>
+              <p className="mt-16 text-center text-muted">{COPY.emptyFiltered}</p>
             ))}
         </main>
 

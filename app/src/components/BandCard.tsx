@@ -1,4 +1,5 @@
 import { DEFAULT_COVER } from '../lib/images.ts'
+import { cx } from '../lib/cx.ts'
 import type { Band } from '../types.ts'
 
 interface BandCardProps {
@@ -6,6 +7,11 @@ interface BandCardProps {
   selected: boolean
   onSelect: () => void
 }
+
+const CARD_BASE =
+  'flex h-full flex-col overflow-hidden rounded-xl bg-card text-left transition-shadow ring-1'
+const CARD_SELECTED = 'ring-2 ring-selected'
+const CARD_IDLE = 'ring-white/5 hover:ring-white/20'
 
 /**
  * A single band card: cover image, band name, album line, description. Cards are
@@ -19,10 +25,7 @@ export default function BandCard({ band, selected, onSelect }: BandCardProps) {
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
-      className={
-        'flex h-full flex-col overflow-hidden rounded-xl bg-card text-left transition-shadow ring-1 ' +
-        (selected ? 'ring-2 ring-selected' : 'ring-white/5 hover:ring-white/20')
-      }
+      className={cx(CARD_BASE, selected ? CARD_SELECTED : CARD_IDLE)}
     >
       <img
         src={band.cover}

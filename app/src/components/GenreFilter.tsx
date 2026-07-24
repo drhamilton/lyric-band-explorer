@@ -1,4 +1,5 @@
-import type { GenreFilter as GenreFilterValue } from '../types.ts'
+import { cx } from '../lib/cx.ts'
+import { ALL_GENRES, type GenreFilter as GenreFilterValue } from '../types.ts'
 
 interface GenreFilterProps {
   value: GenreFilterValue
@@ -8,11 +9,15 @@ interface GenreFilterProps {
 // The genre pill row from the comp. Exactly one pill is active; 'all' clears the
 // genre constraint. Styled but the set is fixed (matches the mock data genres).
 const PILLS: { value: GenreFilterValue; label: string }[] = [
-  { value: 'all', label: 'All' },
+  { value: ALL_GENRES, label: 'All' },
   { value: 'country', label: 'Country' },
   { value: 'rock', label: 'Rock' },
   { value: 'pop', label: 'Pop' },
 ]
+
+const PILL_BASE = 'rounded-full px-4 py-1.5 text-sm font-medium transition-colors'
+const PILL_ACTIVE = 'bg-accent text-white'
+const PILL_IDLE = 'text-neutral-300 ring-1 ring-white/10 hover:bg-white/5'
 
 export default function GenreFilter({ value, onChange }: GenreFilterProps) {
   return (
@@ -25,12 +30,7 @@ export default function GenreFilter({ value, onChange }: GenreFilterProps) {
             type="button"
             aria-pressed={active}
             onClick={() => onChange(pill.value)}
-            className={
-              'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
-              (active
-                ? 'bg-accent text-white'
-                : 'text-neutral-300 ring-1 ring-white/10 hover:bg-white/5')
-            }
+            className={cx(PILL_BASE, active ? PILL_ACTIVE : PILL_IDLE)}
           >
             {pill.label}
           </button>
