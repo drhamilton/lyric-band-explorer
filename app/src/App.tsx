@@ -1,14 +1,12 @@
 import { useMemo, useState } from 'react'
-import { FiInfo } from 'react-icons/fi'
 import { useBands } from './hooks/useBands.ts'
 import { deriveVisibleBands } from './lib/bands.ts'
 import { cx } from './lib/cx.ts'
-import { COPY } from './copy.ts'
-import BandGrid from './components/BandGrid.tsx'
 import TopBar from './components/TopBar.tsx'
+import CatalogView from './components/CatalogView.tsx'
 import WelcomePanel from './components/WelcomePanel.tsx'
-import ErrorState from './components/ErrorState.tsx'
-import { ALL_GENRES, STATUS, type GenreFilter } from './types.ts'
+import ReopenWelcomeButton from './components/ReopenWelcomeButton.tsx'
+import { ALL_GENRES, type GenreFilter } from './types.ts'
 
 export default function App() {
   const { bands, status, error } = useBands()
@@ -46,34 +44,19 @@ export default function App() {
         )}
       >
         <main className="lg:min-h-0 lg:overflow-y-auto">
-          {status === STATUS.Loading && <p className="text-muted">{COPY.loading}</p>}
-          {status === STATUS.Error && <ErrorState message={error?.message} />}
-          {status === STATUS.Ready &&
-            (visibleBands.length > 0 ? (
-              <BandGrid
-                bands={visibleBands}
-                selectedId={selectedId}
-                onSelect={setSelectedId}
-              />
-            ) : (
-              <p className="mt-16 text-center text-muted">{COPY.emptyFiltered}</p>
-            ))}
+          <CatalogView
+            status={status}
+            error={error}
+            bands={visibleBands}
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+          />
         </main>
 
         {welcomeOpen && <WelcomePanel onClose={() => setWelcomeOpen(false)} />}
       </div>
 
-      {/* Reopen affordance once the panel is closed. */}
-      {!welcomeOpen && (
-        <button
-          type="button"
-          onClick={() => setWelcomeOpen(true)}
-          className="fixed bottom-6 right-6 flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-white shadow-lg transition-colors hover:bg-accent-soft"
-        >
-          <FiInfo className="h-4 w-4" />
-          Welcome
-        </button>
-      )}
+      {!welcomeOpen && <ReopenWelcomeButton onClick={() => setWelcomeOpen(true)} />}
     </div>
   )
 }
