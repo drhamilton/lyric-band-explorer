@@ -20,6 +20,8 @@ export default function App() {
     [bands, query, genre],
   )
 
+  const isFiltered = query.trim() !== '' || genre !== ALL_GENRES
+
   return (
     // Fixed-height app shell on desktop: the top bar stays put and the content
     // row fills the remaining viewport height, so the grid and welcome panel
@@ -48,6 +50,7 @@ export default function App() {
             status={status}
             error={error}
             bands={visibleBands}
+            isFiltered={isFiltered}
             selectedId={selectedId}
             onSelect={setSelectedId}
           />
