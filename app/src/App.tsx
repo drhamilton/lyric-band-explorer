@@ -1,15 +1,17 @@
 import { useMemo, useState } from 'react'
+import { FiInfo } from 'react-icons/fi'
 import { useBands } from './hooks/useBands.ts'
 import { deriveVisibleBands } from './lib/bands.ts'
 import BandGrid from './components/BandGrid.tsx'
 import TopBar from './components/TopBar.tsx'
+import WelcomePanel from './components/WelcomePanel.tsx'
 import type { GenreFilter } from './types.ts'
 
-// Welcome panel (#14) lands next.
 export default function App() {
   const { bands, status } = useBands()
   const [query, setQuery] = useState('')
   const [genre, setGenre] = useState<GenreFilter>('all')
+  const [welcomeOpen, setWelcomeOpen] = useState(true)
 
   const visibleBands = useMemo(
     () => deriveVisibleBands({ bands, query, genre }),
@@ -25,20 +27,43 @@ export default function App() {
         onGenreChange={setGenre}
       />
 
-      <main className="mt-6">
-        {status === 'loading' && <p className="text-muted">Loading bands…</p>}
-        {status === 'error' && (
-          <p className="text-red-400">Couldn’t load bands. Please try again.</p>
-        )}
-        {status === 'ready' &&
-          (visibleBands.length > 0 ? (
-            <BandGrid bands={visibleBands} />
-          ) : (
-            <p className="mt-16 text-center text-muted">
-              No bands match your search and filter.
-            </p>
-          ))}
-      </main>
+      {/* Two-column layout: band grid + welcome panel. When the panel is
+          closed, the grid column takes the full width and reflows wider. */}
+      <div
+        className={
+          'mt-6 grid gap-6 ' +
+          (welcomeOpen ? 'lg:grid-cols-[1fr_380px]' : 'grid-cols-1')
+        }
+      >
+        <main>
+          {status === 'loading' && <p className="text-muted">Loading bands…</p>}
+          {status === 'error' && (
+            <p className="text-red-400">Couldn’t load bands. Please try again.</p>
+          )}
+          {status === 'ready' &&
+            (visibleBands.length > 0 ? (
+              <BandGrid bands={visibleBands} />
+            ) : (
+              <p className="mt-16 text-center text-muted">
+                No bands match your search and filter.
+              </p>
+            ))}
+        </main>
+
+        {welcomeOpen && <WelcomePanel onClose={() => setWelcomeOpen(false)} />}
+      </div>
+
+      {/* Reopen affordance once the panel is closed. */}
+      {!welcomeOpen && (
+        <button
+          type="button"
+          onClick={() => setWelcomeOpen(true)}
+          className="fixed bottom-6 right-6 flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-white shadow-lg transition-colors hover:bg-accent-soft"
+        >
+          <FiInfo className="h-4 w-4" />
+          Welcome
+        </button>
+      )}
     </div>
   )
 }
