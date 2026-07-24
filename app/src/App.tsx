@@ -1,17 +1,17 @@
 import { useMemo, useState } from 'react'
-import { FiInfo } from 'react-icons/fi'
 import { useBands } from './hooks/useBands.ts'
 import { deriveVisibleBands } from './lib/bands.ts'
-import BandGrid from './components/BandGrid.tsx'
+import { cx } from './lib/cx.ts'
 import TopBar from './components/TopBar.tsx'
+import CatalogView from './components/CatalogView.tsx'
 import WelcomePanel from './components/WelcomePanel.tsx'
-import ErrorState from './components/ErrorState.tsx'
-import type { GenreFilter } from './types.ts'
+import ReopenWelcomeButton from './components/ReopenWelcomeButton.tsx'
+import { ALL_GENRES, type GenreFilter } from './types.ts'
 
 export default function App() {
   const { bands, status, error } = useBands()
   const [query, setQuery] = useState('')
-  const [genre, setGenre] = useState<GenreFilter>('all')
+  const [genre, setGenre] = useState<GenreFilter>(ALL_GENRES)
   const [welcomeOpen, setWelcomeOpen] = useState(true)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
@@ -19,6 +19,8 @@ export default function App() {
     () => deriveVisibleBands({ bands, query, genre }),
     [bands, query, genre],
   )
+
+  const isFiltered = query.trim() !== '' || genre !== ALL_GENRES
 
   return (
     // Fixed-height app shell on desktop: the top bar stays put and the content
@@ -36,44 +38,28 @@ export default function App() {
       {/* Two-column layout: band grid + welcome panel. When the panel is
           closed, the grid column takes the full width and reflows wider. */}
       <div
-        className={
-          'mt-8 grid gap-8 lg:min-h-0 lg:flex-1 lg:items-stretch ' +
-          (welcomeOpen
+        className={cx(
+          'mt-8 grid gap-8 lg:min-h-0 lg:flex-1 lg:items-stretch',
+          welcomeOpen
             ? 'items-start lg:grid-cols-[1fr_var(--width-panel)]'
-            : 'grid-cols-1')
-        }
+            : 'grid-cols-1',
+        )}
       >
         <main className="lg:min-h-0 lg:overflow-y-auto">
-          {status === 'loading' && <p className="text-muted">Loading bands…</p>}
-          {status === 'error' && <ErrorState message={error?.message} />}
-          {status === 'ready' &&
-            (visibleBands.length > 0 ? (
-              <BandGrid
-                bands={visibleBands}
-                selectedId={selectedId}
-                onSelect={setSelectedId}
-              />
-            ) : (
-              <p className="mt-16 text-center text-muted">
-                No bands match your search and filter.
-              </p>
-            ))}
+          <CatalogView
+            status={status}
+            error={error}
+            bands={visibleBands}
+            isFiltered={isFiltered}
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+          />
         </main>
 
         {welcomeOpen && <WelcomePanel onClose={() => setWelcomeOpen(false)} />}
       </div>
 
-      {/* Reopen affordance once the panel is closed. */}
-      {!welcomeOpen && (
-        <button
-          type="button"
-          onClick={() => setWelcomeOpen(true)}
-          className="fixed bottom-6 right-6 flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-white shadow-lg transition-colors hover:bg-accent-soft"
-        >
-          <FiInfo className="h-4 w-4" />
-          Welcome
-        </button>
-      )}
+      {!welcomeOpen && <ReopenWelcomeButton onClick={() => setWelcomeOpen(true)} />}
     </div>
   )
 }
