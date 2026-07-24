@@ -2,9 +2,18 @@ import { describe, it, expect } from 'vitest'
 import {
   loadBands,
   fetchBandDetail,
+  deriveVisibleBands,
   DEFAULT_DESCRIPTION,
   type FetchLike,
 } from './bands.ts'
+import type { Band } from '../types.ts'
+
+// A small fixture of fully-hydrated bands for the pure filter tests.
+const BANDS: Band[] = [
+  { id: '001', band_name: 'The Velvet Echo', album: 'Whispers', genre: 'rock', cover: '', description: '' },
+  { id: '002', band_name: 'Silver Strings', album: 'Resonance', genre: 'country', cover: '', description: '' },
+  { id: '004', band_name: 'Crimson Groove', album: 'Scarlet', genre: 'pop', cover: '', description: '' },
+]
 
 type Route = { body?: unknown; ok?: boolean; status?: number; throws?: boolean }
 
@@ -70,5 +79,30 @@ describe('loadBands', () => {
   it('rejects when the band summary list fails to load', async () => {
     const fetch = fakeFetch({}) // bands.json 404
     await expect(loadBands(fetch)).rejects.toThrow(/Failed to load bands/)
+  })
+})
+
+describe('deriveVisibleBands — search', () => {
+  it('returns all bands when the query is empty', () => {
+    expect(deriveVisibleBands({ bands: BANDS, query: '' })).toHaveLength(3)
+  })
+
+  it('matches partial names, case-insensitively', () => {
+    const result = deriveVisibleBands({ bands: BANDS, query: 'sil' })
+    expect(result.map((b) => b.id)).toEqual(['002'])
+    expect(deriveVisibleBands({ bands: BANDS, query: 'ECHO' }).map((b) => b.id)).toEqual(['001'])
+  })
+
+  it('trims whitespace-only queries to "match all"', () => {
+    expect(deriveVisibleBands({ bands: BANDS, query: '   ' })).toHaveLength(3)
+  })
+
+  it('returns an empty list when nothing matches', () => {
+    expect(deriveVisibleBands({ bands: BANDS, query: 'zzz' })).toEqual([])
+  })
+
+  it('preserves input ordering', () => {
+    const result = deriveVisibleBands({ bands: BANDS, query: 's' })
+    expect(result.map((b) => b.id)).toEqual(['002', '004'])
   })
 })

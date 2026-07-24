@@ -1,14 +1,20 @@
 import Logo from './Logo.tsx'
 import IconBar from './IconBar.tsx'
+import SearchBox from './SearchBox.tsx'
 
-// The top navigation bar. Assembles the logo, the filter/search region (added in
-// #11/#12), and the decorative icon bar. Rounded surface panel per the comp.
-export default function TopBar() {
+interface TopBarProps {
+  query: string
+  onQueryChange: (value: string) => void
+}
+
+// The top navigation bar. Assembles the logo, the filter/search region, and the
+// decorative icon bar. Rounded surface panel per the comp.
+export default function TopBar({ query, onQueryChange }: TopBarProps) {
   return (
     <header className="flex items-center gap-6 rounded-2xl bg-surface px-5 py-3">
       <Logo />
-      {/* Filter pills (#12) + search (#11) land in this middle region. */}
-      <div className="flex-1" />
+      {/* Genre pills (#12) join the search box in this middle region. */}
+      <SearchBox value={query} onChange={onQueryChange} />
       <IconBar />
     </header>
   )
